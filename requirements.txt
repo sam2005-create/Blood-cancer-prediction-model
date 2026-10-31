@@ -1,0 +1,7 @@
+tensorflow>=2.13
+opencv-python>=4.5.4
+numpy
+Pillow
+matplotlib
+scikit-learn
+pytest
