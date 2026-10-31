@@ -33,7 +33,6 @@ def trained(tmp_path_factory):
 
     model_dir = root / "model"
     train.main(dataset_dir=dataset, model_dir=model_dir, epochs=1, img_size=IMG, weights=None)
-    predict._model = None
     return root, dataset, model_dir
 
 
@@ -64,6 +63,18 @@ def test_predict_rejects_missing_and_broken_files(trained, tmp_path):
     broken.write_text("not an image")
     with pytest.raises(ValueError):
         predict.prepare_image(broken)
+
+
+def test_prediction_input_matches_training_input(trained):
+    # predict.py should hand the model exactly what Keras fed it during training.
+    from tensorflow.keras.preprocessing.image import img_to_array, load_img
+
+    _, dataset, _ = trained
+    path = dataset / "Benign" / "3.png"
+    keras_img = img_to_array(load_img(path, target_size=(IMG, IMG), interpolation="nearest")) / 255.0
+    ours = predict.prepare_image(path, IMG)[0]
+    assert ours.shape == keras_img.shape
+    assert np.abs(ours - keras_img).max() < 1e-6
 
 
 def test_evaluate_and_plots_write_results(trained):

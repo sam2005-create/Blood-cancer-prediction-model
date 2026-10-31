@@ -67,7 +67,7 @@ def main(dataset_dir=config.DATASET_DIR, model_dir=config.MODEL_DIR, epochs=conf
     history = model.fit(train_data, validation_data=val_data, epochs=epochs)
 
     model_dir.mkdir(parents=True, exist_ok=True)
-    model.save(model_dir / config.MODEL_PATH.name)
+    model.save(str(model_dir / config.MODEL_PATH.name))
 
     # Save the label order with the model so predict.py never has to guess it.
     class_names = sorted(train_data.class_indices, key=train_data.class_indices.get)

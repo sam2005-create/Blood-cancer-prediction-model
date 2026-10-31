@@ -19,4 +19,5 @@ SEED = 42
 # Keras sorts class folders alphabetically, so this is the order the model learns.
 CLASS_NAMES = ["Benign", "Early", "Pre", "Pro"]
 
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
+# Same formats Keras picks up from the class folders.
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".ppm", ".tif", ".tiff"}

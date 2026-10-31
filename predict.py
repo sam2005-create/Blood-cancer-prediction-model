@@ -13,24 +13,24 @@ import tensorflow as tf
 
 import config
 
-_model = None
-_class_names = None
+# Loaded models, keyed by path, so the GUI doesn't reload the model on every click.
+_cache = {}
 
 
 def load_model(model_path=config.MODEL_PATH):
-    global _model, _class_names
-    if _model is None:
-        model_path = Path(model_path)
+    model_path = Path(model_path).resolve()
+    if model_path not in _cache:
         if not model_path.exists():
             raise FileNotFoundError(f"No trained model at {model_path}. Run train.py first.")
-        _model = tf.keras.models.load_model(model_path)
+        model = tf.keras.models.load_model(str(model_path))
 
         names_file = model_path.parent / config.CLASS_NAMES_PATH.name
         if names_file.exists():
-            _class_names = json.loads(names_file.read_text(encoding="utf-8"))
+            class_names = json.loads(names_file.read_text(encoding="utf-8"))
         else:
-            _class_names = config.CLASS_NAMES
-    return _model, _class_names
+            class_names = config.CLASS_NAMES
+        _cache[model_path] = (model, class_names)
+    return _cache[model_path]
 
 
 def prepare_image(image_path, img_size=config.IMG_SIZE):
